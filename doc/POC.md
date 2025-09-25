@@ -139,33 +139,10 @@ $ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.p
 - Click to `CREATE`  
 ![CREATE](img/image4.png)  
 
-6. Переглянемо деталі розгорнутого застосунку натиснувши на нього в списку.  
-Графічний інтерфейс надає ієрархічне уявлення про компоненти програми, їх розгортання та поточний стан у кластері. 
+6. We can check our app click on it 
 
-![NODES](.img/ArgoCD.gif)  
+![NODES](img/image5.png)  
+![NODES](img/image6.png)  
+![NODES](img/image7.png)  
+![NODES](img/image8.png)  
 
-7. Синхронізація застосунку 
-- Для цього у вікні відомостей про програму натискаємо кнопку `SYNC` 
-- Праворуч вискакує вікно в якому потрібно обрати компоненти та режими синхронізації та натиснути кнопку `SYNCHRONIZE`  
-- Після завершення процесу можемо перевірити правильність розгортання програми, перевіривши її статус у кластері:  
-
-![SYNCHRONIZE](.img/argo_status.png)  
-
-8. Прослідкуємо за реакцією ArgoCD на зміни в репозиторію.
-- Змінимо в файлі репозиторію https://github.com/vit-um/go-demo-app/blob/master/helm/values.yaml тип шлюзу з `NodePort` на `LoadBalancer` (останній рядок файлу)  
-
-![out of sync](.img/argo_outofsync.png)
-
-```bath
-$ k get svc -n demo
-NAME               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                                 AGE
-demo-nats          ClusterIP   None            <none>        4222/TCP,6222/TCP,8222/TCP,7777/TCP,7422/TCP,7522/TCP   31m
-demo-front         ClusterIP   10.43.247.92    <none>        80/TCP                                                  31m
-cache              ClusterIP   10.43.234.48    <none>        6379/TCP                                                31m
-ambassador         NodePort    10.43.190.212   <none>        80:30092/TCP                                            31m
-```
-- Викликаний процес синхронізації отримає останню версію репозиторію гіт та порівняє її з поточним станом. Таким чином бачимо що тип сервісу для ambassador змінився з NodePort на LoadBalancer та відповідно був оновлений маніфест Kubernetes
-```bath
-$ NAME               TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
-ambassador         LoadBalancer   10.43.190.212   <pending>     80:30092/TCP          35m
-```
